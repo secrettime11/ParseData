@@ -115,6 +115,35 @@ namespace ParseData
             }
             return null;
         }
+
+        public static Dictionary<string, string> ParseStopSell(string date)
+        {
+            Dictionary<string, string> Data = new Dictionary<string, string>();
+            HtmlWeb webClient = new HtmlWeb();
+            var doc = webClient.Load($"https://www.twse.com.tw/exchangeReport/TWTBAU1?response=html");
+            var table = doc.DocumentNode.SelectSingleNode("/html/body//div[contains(text(),'暫停先賣後買當日沖銷')]");
+            if (table != null)
+            {
+                table = FindTable(table);
+
+                var tbody = table.SelectNodes(".//tbody//tr");
+                if (tbody != null)
+                {
+                    foreach (var tr in tbody)
+                    {
+                        List<string> Info = new List<string>();
+                        foreach (var td in tr.SelectNodes(".//td"))
+                        {
+                            Console.WriteLine(td.InnerText.Trim());
+                            //Data.Add(td.InnerText.Trim());
+                        }
+                    }
+                    return Data;
+                }
+            }
+            return null;
+        }
+
         private static HtmlNode FindTable(HtmlNode node)
         {
             if (node.ParentNode.Name.Equals("table", StringComparison.OrdinalIgnoreCase))
